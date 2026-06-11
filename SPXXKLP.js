@@ -15,7 +15,7 @@
 // @match       https://help.minecraft.net/hc/en-us/articles/*
 // @require     https://fastly.jsdelivr.net/gh/sizzlemctwizzle/GM_config@2207c5c1322ebb56e401f03c2e581719f909762a/gm_config.js
 // @icon        https://www.minecraft.net/etc.clientlibs/minecraft/clientlibs/main/resources/favicon.ico
-// @version     3.2.5
+// @version     3.2.6
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @grant       GM_setClipboard
@@ -94,7 +94,7 @@
     },
   };
 
-  var version = "3.2.5";
+  var version = "3.2.6";
 
   function getVersionType(url) {
     const lowerUrl = url.toLowerCase();
@@ -437,7 +437,7 @@ Converted at ${time.getFullYear()}-${
         [/ADD-ONS AND SCRIPT ENGINE/gi, "附加包和脚本引擎"],
         [/DRESSING ROOM/gi, "更衣室"],
         [/Item/gi, "物品"],
-        [/CHANGES/gi, "改动"],
+        [/CHANGES/gi, "更改"],
         [/SOUNDS/gi, "音效"],
         [/DATA PACK VERSION/gi, "数据包版本"],
         [/PREDICATES/gi, "谓词"],
@@ -463,7 +463,7 @@ Converted at ${time.getFullYear()}-${
         [/SHADERS/gi, "着色器"],
         [/PARTICLES/gi, "粒子效果"],
         [/TOUCH CONTROLS/gi, "触控"],
-        [/TECHNICAL UPDATES/gi, "技术性更新"],
+        [/TECHNICAL CHANGES/gi, "技术性更改"],
         [/ TABLES/gi, "表"],
         [/PROJECTILES/gi, "弹射物"],
         [/STRUCTURES/gi, "结构"],
