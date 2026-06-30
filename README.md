@@ -21,9 +21,9 @@ SPXX project is licensed under [CC0-1.0](https://creativecommons.org/publicdomai
 SPXX 项目使用 CC0-1.0 协议进行授权。
 
 # Contributers
-SPXXKLP is written by Cinder0601 based on SPXX User Script v2.4.14 and SPX.
+SPXXKLP is written by [Cinder0601](https://github.com/cinder0601) based on SPXX User Script v2.4.14 and SPX, and is now maintained by [M397749490](https://github.com/M397749490).
 
-SPXXKLP 由 Cinder0601 基于 SPXX 用户脚本 v2.4.14 及 SPX 进行改写。
+SPXXKLP 由 [Cinder0601](https://github.com/cinder0601) 基于 SPXX 用户脚本 v2.4.14 及 SPX 进行改写，现在由 [M397749490](https://github.com/M397749490) 进行维护。
 
 Got help from [Redstone-D](https://github.com/Redstone-D) during development.
 

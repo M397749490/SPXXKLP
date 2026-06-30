@@ -7,7 +7,7 @@
 // @connect     feedback.minecraft.com
 // @connect     help.minecraft.net
 // @connect     raw.githubusercontent.com
-// @homepage    https://github.com/cinder0601/SPXXKLP
+// @homepage    https://github.com/M397749490/SPXXKLP
 // @match       https://www.minecraft.net/en-us/article/*
 // @match       https://www.minecraft.net/zh-hans/article/*
 // @match       https://x.com/*/status/*
@@ -15,7 +15,7 @@
 // @match       https://help.minecraft.net/hc/en-us/articles/*
 // @require     https://fastly.jsdelivr.net/gh/sizzlemctwizzle/GM_config@2207c5c1322ebb56e401f03c2e581719f909762a/gm_config.js
 // @icon        https://www.minecraft.net/etc.clientlibs/minecraft/clientlibs/main/resources/favicon.ico
-// @version     3.2.6
+// @version     3.2.7
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @grant       GM_setClipboard
@@ -94,7 +94,7 @@
     },
   };
 
-  var version = "3.2.6";
+  var version = "3.2.7";
 
   function getVersionType(url) {
     const lowerUrl = url.toLowerCase();
@@ -130,7 +130,21 @@
 
   function getReleaseVersionCode(url) {
     const lowerUrl = url.toLowerCase();
-    if (lowerUrl.includes("pre-release")) {
+    if (lowerUrl.includes("snapshot")) {
+      const versionRegex = /(-\d+)?(-\d+)?-snapshot-([0-9a-zA-Z]+)$/;
+      const match = lowerUrl.match(versionRegex);
+      if (match && match.length >= 4) {
+        const Version1 = match[1] ? match[1].match(/(\d+)/)[1] : "";
+        const Version2 = match[2] ? match[2].match(/(\d+)/)[1] : "";
+        const Version3 = match[3];
+        if (Version1 == "" && Version2 == "") {
+          return "<正式版版本号>";
+        } else {
+          const formattedVersion = `${Version1}.${Version2}`;
+          return formattedVersion;
+        }
+      }
+    } else if (lowerUrl.includes("pre-release")) {
       const versionRegex = /(\d+)-(\d+)-(\d*)(.+)-release/;
       const match = lowerUrl.match(versionRegex);
       if (match && match.length >= 3) {
@@ -160,16 +174,41 @@
           return formattedVersion;
         }
       }
+    } else if (lowerUrl.includes("preview") || lowerUrl.includes("beta")) {
+      const versionRegex = /-beta(-preview)?-(\d+)-(\d+)-(\d+)(-\d+)?(-\d+)?/;
+      const match = lowerUrl.match(versionRegex);
+      if (match && match.length >= 5) {
+        const Version1 = match[2];
+        const Version2 = match[3];
+        const Version3 = match[4];
+        const Version4 = match[5] ? match[5].match(/(\d+)/)[1] : "";
+        const Version5 = match[6] ? match[6].match(/(\d+)/)[1] : "";
+        if (Version1 == "1") {
+          const formattedVersion = `${Version1}.${Version2}.${Version3}`;
+          return formattedVersion;
+        } else {
+          const formattedVersion = `${Version1}.${Version2}`;
+          return formattedVersion;
+        }
+      }
     }
   }
 
   function getVersionCode(url) {
     const lowerUrl = url.toLowerCase();
     if (lowerUrl.includes("snapshot")) {
-      const versionRegex = /-([0-9a-zA-Z]+)$/;
-      const match = url.match(versionRegex);
-      if (match && match[1]) {
-        return match[1];
+      const versionRegex = /(-\d+)?(-\d+)?-snapshot-([0-9a-zA-Z]+)$/;
+      const match = lowerUrl.match(versionRegex);
+      if (match && match.length >= 4) {
+        const Version1 = match[1] ? match[1].match(/(\d+)/)[1] : "";
+        const Version2 = match[2] ? match[2].match(/(\d+)/)[1] : "";
+        const Version3 = match[3];
+        if (Version1 == "" && Version2 == "") {
+          return Version3;
+        } else {
+          const formattedVersion = `${Version1}.${Version2}-snapshot${Version3}`;
+          return formattedVersion;
+        }
       }
     } else if (lowerUrl.includes("pre-release")) {
       const versionRegex = /(\d+)-(\d+)-(\d*)(.+)-release-(\d+)/;
@@ -203,51 +242,47 @@
           return formattedVersion;
         }
       }
-    } else if (lowerUrl.includes("minecraft-beta-preview")) {
-      const versionRegex = /-beta-preview-(\d+)-(\d+)-(\d+)-(\d+)/;
+    } else if (lowerUrl.includes("preview") || lowerUrl.includes("beta")) {
+      const versionRegex = /-beta(-preview)?-(\d+)-(\d+)-(\d+)(-\d+)?(-\d+)?/;
       const match = lowerUrl.match(versionRegex);
       if (match && match.length >= 5) {
-        const Version1 = match[1];
-        const Version2 = match[2];
-        const Version3 = match[3];
-        const Version4 = match[4];
-        const formattedVersion = `${Version1}.${Version2}.${Version3}.${Version4}`;
-        return formattedVersion;
-      }
-    } else if (
-      lowerUrl.includes("minecraft-preview") &&
-      !lowerUrl.includes("beta")
-    ) {
-      const versionRegex = /-preview-(\d+)-(\d+)-(\d+)-(\d+)/;
-      const match = lowerUrl.match(versionRegex);
-      if (match && match.length >= 5) {
-        const Version1 = match[1];
-        const Version2 = match[2];
-        const Version3 = match[3];
-        const Version4 = match[4];
-        const formattedVersion = `${Version1}.${Version2}.${Version3}.${Version4}`;
-        return formattedVersion;
-      }
-    } else if (
-      lowerUrl.includes("minecraft-beta") &&
-      !lowerUrl.includes("preview")
-    ) {
-      const versionRegex = /-beta-(\d+)-(\d+)-(\d+)-(\d+)/;
-      const match = lowerUrl.match(versionRegex);
-      if (match && match.length >= 5) {
-        const Version1 = match[1];
-        const Version2 = match[2];
-        const Version3 = match[3];
-        const Version4 = match[4];
-        const formattedVersion = `${Version1}.${Version2}.${Version3}.${Version4}`;
-        return formattedVersion;
+        const Version1 = match[2];
+        const Version2 = match[3];
+        const Version3 = match[4];
+        const Version4 = match[5] ? match[5].match(/(\d+)/)[1] : "";
+        const Version5 = match[6] ? match[6].match(/(\d+)/)[1] : "";
+        if (Version1 == "1") {
+          if (Version5 == "") {
+            const formattedVersion = `${Version1}.${Version2}.${Version3}.${Version4}`;
+            return formattedVersion;
+          } else {
+            const formattedVersion = `${Version1}.${Version2}.${Version3}.${Version4}/${Version5}`;
+            return formattedVersion;
+          }
+        } else {
+          if (Version4 == "") {
+            const formattedVersion = `${Version1}.${Version2}.${Version3}`;
+            return formattedVersion;
+          } else {
+            const formattedVersion = `${Version1}.${Version2}.${Version3}/${Version4}`;
+            return formattedVersion;
+          }
+        }
       }
     }
   }
 
   function getVersionCount(url) {
     const lowerUrl = url.toLowerCase();
-    if (lowerUrl.includes("pre-release")) {
+    if (lowerUrl.includes("snapshot")) {
+      const versionRegex = /-snapshot-([0-9a-zA-Z]+)$/;
+      const match = lowerUrl.match(versionRegex);
+      if (match && match[1] && match[1].match(/(\d+)$/)) {
+        return match[1];
+      } else {
+        return "<计数>";
+      }
+    } else if (lowerUrl.includes("pre-release")) {
       const versionRegex = /-release-(\d+)/;
       const match = lowerUrl.match(versionRegex);
       if (match && match[1]) {
@@ -281,7 +316,7 @@
         return `[color=#388e3c][size=5]|[/size][/color][size=4][b]Minecraft Java 版[/b]是指 Windows、Mac OS 与 Linux 平台上，使用 Java 语言开发的 Minecraft 版本。[/size]
 [color=#388e3c][size=5]|[/size][/color][size=4][b]每周快照[/b]是 Minecraft Java 版的测试机制，主要用于下一个正式版的特性预览。[/size]
 [color=#f44336][size=5]|[/size][/color][size=4]然而，[b]每周快照[/b]主要用于新特性展示，通常存在大量漏洞。因此对于普通玩家建议仅做[color=Red][b]测试尝鲜[/b][/color]用。在快照中打开存档前请务必[color=Red][b]进行备份[/b][/color]。[b]适用于正式版的 Mod 不兼容快照，且大多数 Mod 都不对每周快照提供支持[/b]。 [/size]
-[color=#f44336][size=5]|[/size][/color][size=4]Minecraft Java 版 <正式版版本号> 仍未发布，${versioncode} 为其第 <计数> 个快照。[/size]
+[color=#f44336][size=5]|[/size][/color][size=4]Minecraft Java 版 ${releaseversioncode} 仍未发布，${versioncode} 为其第 ${versioncount} 个快照。[/size]
 [color=#388e3c][size=5]|[/size][/color][size=4]本文内容按照 [/size][url=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans][size=4][color=#2e8b57][u]CC BY-NC-SA 4.0[/u][/color][/size][/url][size=4] 协议进行授权，[b]转载本帖时须注明[color=#ff0000]原作者[/color]以及[color=#ff0000]本帖地址[/color][/b]。[/size][hr]\n`;
 
       case VersionType.PreRelease:
@@ -314,7 +349,7 @@
 [color=#388e3c][size=5]|[/size][/color][size=4][b]测试版[/b]是 Minecraft 基岩版的测试机制，主要用于下一个正式版的特性预览。[/size]
 [color=#f44336][size=5]|[/size][/color][size=4][b]然而，测试版主要用于新特性展示，通常存在大量漏洞。因此对于普通玩家建议仅做测试尝鲜用。使用测试版打开存档前请务必备份。适用于正式版的领域服务器与测试版不兼容。[/b] [/size]
 [color=#f44336][size=5]|[/size][/color][size=4]如果在测试版中遇到旧版存档无法使用的问题，测试版将允许你将存档上传以供开发团队查找问题。[/size]
-[color=#f44336][size=5]|[/size][/color][size=4]Minecraft 基岩版 <正式版版本号> 仍未发布，Beta & Preview ${versioncode} 为其第 <计数> 个测试版。[/size]
+[color=#f44336][size=5]|[/size][/color][size=4]Minecraft 基岩版 ${releaseversioncode} 仍未发布，Beta & Preview ${versioncode} 为其第 <计数> 个测试版。[/size]
 [color=#388e3c][size=5]|[/size][/color][size=4]本文内容按照 [/size][url=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans][size=4][color=#2e8b57][u]CC BY-NC-SA 4.0[/u][/color][/size][/url][size=4] 协议进行授权，[b]转载本帖时须注明[color=#ff0000]原作者[/color]以及[color=#ff0000]本帖地址[/color][/b]。[/size][hr]\n`;
 
       case VersionType.Normal:
@@ -1021,7 +1056,7 @@ Converted at ${time.getFullYear()}-${
         let theList = "";
         let addingList = false;
 
-        for (let i = 0; i < ele.childNodes.length - 1; i++) {
+        for (let i = 0; i < ele.childNodes.length; i++) {
           let nodeName = ele.childNodes[i].nodeName;
 
           if (nodeName === "OL" || nodeName === "UL") {
