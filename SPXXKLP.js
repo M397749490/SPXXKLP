@@ -2,7 +2,7 @@
 // @name        SPXXKLP
 // @description Minecraft.net & X.com blog article to BBCode converter, adapted to KLPBBS
 // @namespace   npmjs.com/package/@spxxklp/userscript
-// @author      Cinder & SPGoding & SPX Fellow
+// @author      Cinder & M397749490 & SPGoding & SPX Fellow
 // @connect     *
 // @connect     feedback.minecraft.com
 // @connect     help.minecraft.net
@@ -15,7 +15,7 @@
 // @match       https://help.minecraft.net/hc/en-us/articles/*
 // @require     https://fastly.jsdelivr.net/gh/sizzlemctwizzle/GM_config@2207c5c1322ebb56e401f03c2e581719f909762a/gm_config.js
 // @icon        https://www.minecraft.net/etc.clientlibs/minecraft/clientlibs/main/resources/favicon.ico
-// @version     3.2.7
+// @version     3.2.8
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @grant       GM_setClipboard
@@ -94,7 +94,7 @@
     },
   };
 
-  var version = "3.2.7";
+  var version = "3.2.8";
 
   function getVersionType(url) {
     const lowerUrl = url.toLowerCase();
@@ -646,6 +646,9 @@ Converted at ${time.getFullYear()}-${
         case "H4":
           return converters.h4(node, ctx);
 
+        case "H5":
+          return converters.h5(node, ctx);
+
         case "I":
           return converters.i(node, ctx);
 
@@ -698,24 +701,21 @@ Converted at ${time.getFullYear()}-${
             return "";
           }
 
-        case "H5":
-          return converters.h5(node, ctx);
-
         case "BUTTON":
         case "NAV":
-        case "svg":
+        case "SVG":
         case "SCRIPT":
           if (node) {
             return node.textContent ? node.textContent : "";
           } else {
             return "";
           }
+
         case "FIGURE":
           return converters.figure(node, ctx);
 
         default:
           console.warn(`Unknown type: '${node.nodeName}'.`);
-
           if (node) {
             return node.textContent ? node.textContent : "";
           } else {
@@ -756,9 +756,7 @@ Converted at ${time.getFullYear()}-${
       return ans;
     },
     blockquote: async (ele, ctx) => {
-      const prefix = "";
-      const suffix = "";
-      const ans = `${prefix}${await converters.recurse(ele, ctx)}${suffix}`;
+      const ans = `[quote]${await converters.recurse(ele, ctx)}[/quote]`;
       return ans;
     },
     br: async () => {
@@ -768,7 +766,11 @@ Converted at ${time.getFullYear()}-${
     cite: async (ele, ctx) => {
       const prefix = "—— ";
       const suffix = "";
-      const ans = `${prefix}${await converters.recurse(ele, ctx)}${suffix}`;
+      const inner = await converters.recurse(ele, ctx);
+      if (!inner || !inner.trim()) {
+        return "";
+      }
+      const ans = `${prefix}${inner}${suffix}`;
       return ans;
     },
     code: async (ele, ctx) => {
@@ -939,13 +941,16 @@ Converted at ${time.getFullYear()}-${
       );
       const rawInner = rawInnerArray.join("");
       const inner = makeUppercaseHeader(rawInner);
-      const ans = `\n${prefix}[color=Silver]${usingSilver(inner).replace(
+      let ans = `\n${prefix}[color=Silver]${usingSilver(inner).replace(
         /[\n\r]+/g,
         " "
       )}[/color]${suffix}\n${prefix}${translate(`${inner}`, ctx, [
         "headings",
         "punctuation",
       ]).replace(/[\n\r]+/g, " ")}${suffix}\n\n`;
+      if (ele.style && ele.style.textAlign === "center") {
+        ans = `[align=center]${ans}[/align]\n`;
+      }
       return ans;
     },
     h3: async (ele, ctx) => {
@@ -1244,8 +1249,7 @@ Converted at ${time.getFullYear()}-${
       return ans;
     },
     ul: async (ele, ctx) => {
-      const inner = await converters.recurse(ele, ctx);
-      const ans = `[list]\n${inner}[/list]\n`;
+      const ans = `[list]\n${await converters.recurse(ele, ctx)}[/list]\n`;
       return ans;
     },
   };
@@ -1655,7 +1659,7 @@ Converted at ${time.getFullYear()}-${
   async function getContent(html, ctx) {
     let results = [];
     let elements = document.querySelectorAll(
-      ".MC_articleGridA_container.MC_articleGridA_grid, .MC_Carousel_track_slide.MC_Theme_Vanilla.MC_Carousel_track_slide__active, .MC_Carousel_track_slide.MC_Theme_Vanilla:not(.MC_Carousel_track_slide__copy), .MC_Carousel_track_slide.MC_Theme_Legends.MC_Carousel_track_slide__active, .MC_Carousel_track_slide.MC_Theme_Legends:not(.MC_Carousel_track_slide__copy)"
+      ".MC_articleGridA_container.MC_articleGridA_grid, .MC_AEM_Wrapper section[data-mc-ref='mc_grids_articleBlockQuoteA'], .MC_AEM_Wrapper section[data-mc-ref='mc_banner_textBannerA'], .MC_Carousel_track_slide.MC_Theme_Vanilla.MC_Carousel_track_slide__active, .MC_Carousel_track_slide.MC_Theme_Vanilla:not(.MC_Carousel_track_slide__copy), .MC_Carousel_track_slide.MC_Theme_Legends.MC_Carousel_track_slide__active, .MC_Carousel_track_slide.MC_Theme_Legends:not(.MC_Carousel_track_slide__copy)"
     );
     let container = document.createElement("div");
 
