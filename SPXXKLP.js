@@ -15,7 +15,7 @@
 // @match       https://help.minecraft.net/hc/en-us/articles/*
 // @require     https://fastly.jsdelivr.net/gh/sizzlemctwizzle/GM_config@2207c5c1322ebb56e401f03c2e581719f909762a/gm_config.js
 // @icon        https://www.minecraft.net/etc.clientlibs/minecraft/clientlibs/main/resources/favicon.ico
-// @version     3.2.8
+// @version     3.2.9
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @grant       GM_setClipboard
@@ -94,7 +94,7 @@
     },
   };
 
-  var version = "3.2.8";
+  var version = "3.2.9";
 
   function getVersionType(url) {
     const lowerUrl = url.toLowerCase();
@@ -1951,7 +1951,23 @@ ${translate(
 
     getZendesk(
       (button) => {
-        document.querySelector(".topNavbar nav").append(button);
+        const articleContent = document.querySelector(
+          ".article-info .article-content"
+        );
+        if (articleContent) {
+          button.style.marginLeft = "0";
+          button.style.marginRight = "auto";
+          articleContent.insertAdjacentElement("beforebegin", button);
+          return;
+        }
+
+        const article = document.querySelector(".article");
+        if (article) {
+          article.insertAdjacentElement("afterbegin", button);
+          return;
+        }
+
+        document.body.append(button);
       },
       " – Minecraft Feedback",
       "article-info",
